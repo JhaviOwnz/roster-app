@@ -1,0 +1,15 @@
+{
+  "weekStart": "2025-05-19",
+  "data": [
+    {
+      "name": "Pablo",
+      "Mon": "08:00–16:30",
+      "Tue": "Posta?",
+      "Wed": "test",
+      "Thu": "09:00–16:30",
+      "Fri": "OFF",
+      "Sat": "OFF",
+      "Sun": "OFF"
+    }
+  ]
+}
