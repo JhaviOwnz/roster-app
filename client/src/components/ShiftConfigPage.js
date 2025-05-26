@@ -11,6 +11,9 @@ const ShiftConfigPage = () => {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false); // ✅ para mostrar modal de confirmación
+
+
 
   // Al montar el componente, obtener configuración desde el backend
   useEffect(() => {
@@ -73,41 +76,32 @@ const ShiftConfigPage = () => {
   };
 
   // Confirmar y guardar todos los cambios al backend
-  const handleSaveAll = () => {
-    Modal.confirm({
-      title: 'Are you sure you want to save all changes?',
-      content: 'This will overwrite the shift configuration file.',
-      okText: 'Yes, save',
-      cancelText: 'Cancel',
-      onOk: async () => {
-        setIsSaving(true);
+ const handleSaveAll = async () => {
+  setIsSaving(true);
+  setConfirmVisible(false); // ✅ ocultar el modal manual
 
-        // Convertimos de objeto a array con IDs para el backend
-        const shiftsArray = Object.entries(shifts).map(([name, times], index) => ({
-          id: index + 1,
-          name,
-          times
-        }));
+  const shiftsArray = Object.entries(shifts).map(([name, times], index) => ({
+    id: index + 1,
+    name,
+    times
+  }));
 
-        console.log("Saving shifts:", shiftsArray);
+  console.log("Saving shifts:", shiftsArray);
 
-        try {
-          const response = await axios.put('http://localhost:5000/api/shifts', shiftsArray, {
-            headers: { 'Content-Type': 'application/json' }
-          });
-
-          console.log("Response from backend:", response.data);
-          message.success('All shifts saved successfully!');
-        } catch (err) {
-          console.error("Error saving shifts:", err);
-          message.error('Error saving shifts');
-        } finally {
-          setIsSaving(false);
-        }
-      }
+  try {
+    const response = await axios.put('http://localhost:5000/api/shifts', shiftsArray, {
+      headers: { 'Content-Type': 'application/json' }
     });
-  };
 
+    console.log("Response from backend:", response.data);
+    message.success('All shifts saved successfully!');
+  } catch (err) {
+    console.error("Error saving shifts:", err);
+    message.error('Error saving shifts');
+  } finally {
+    setIsSaving(false);
+  }
+};
   // Render principal
   return (
     <Spin spinning={isSaving}>
@@ -172,14 +166,25 @@ const ShiftConfigPage = () => {
         </Modal>
 
         {/* Botón principal para guardar todo */}
-        <Button
-          type="primary"
-          style={{ marginTop: 20 }}
-          onClick={handleSaveAll}
-        >
-          Save All Changes
-        </Button>
+<Button
+  type="primary"
+  style={{ marginTop: 20 }}
+onClick={() => setConfirmVisible(true)}
+
+>
+  Save All Changes
+</Button>
       </div>
+      <Modal
+  title="Confirm Save"
+  open={confirmVisible}
+  onOk={handleSaveAll}
+  onCancel={() => setConfirmVisible(false)}
+  okText="Yes, save"
+  cancelText="Cancel"
+>
+  <p>This will overwrite the shift configuration file.</p>
+</Modal>
     </Spin>
   );
 };
