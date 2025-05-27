@@ -12,6 +12,8 @@ const shiftConfigPath = path.join(__dirname, '..', 'db', 'shiftConfig.json');
  * Devuelve todos los turnos desde el archivo JSON
  */
 router.get('/', (req, res) => {
+  console.log("🟡 GET /api/shifts called");
+
   fs.readFile(shiftConfigPath, 'utf8', (err, data) => {
     if (err) {
       console.error('❌ Error reading shift config:', err);
