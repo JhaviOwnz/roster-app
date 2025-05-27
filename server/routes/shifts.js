@@ -37,18 +37,33 @@ router.put('/', (req, res) => {
   console.log("✅ PUT /api/shifts triggered");
   const newShifts = req.body;
 
-  // Validación: debe ser un array
+  // ✉️ Validación: debe ser un array de objetos con name y times
   if (!Array.isArray(newShifts)) {
     return res.status(400).json({ error: 'Invalid data format. Expected an array.' });
   }
+
+  const hasErrors = newShifts.some(s => {
+    return (
+      typeof s.name !== 'string' ||
+      !Array.isArray(s.times) ||
+      !s.times.every(t => typeof t === 'string')
+    );
+  });
+
+  if (hasErrors) {
+    return res.status(400).json({ error: 'Each shift must have a name and an array of strings in "times".' });
+  }
+
   console.log("Received data to save:", newShifts);
 
+  // 🔢 Guardar la nueva configuración en disco
   fs.writeFile(shiftConfigPath, JSON.stringify(newShifts, null, 2), 'utf8', (err) => {
     if (err) {
       console.error('❌ Error saving shifts:', err);
       return res.status(500).json({ error: 'Could not save shifts.' });
     }
 
+    console.log("✅ Shift config saved successfully.");
     res.json({ success: true });
   });
 });

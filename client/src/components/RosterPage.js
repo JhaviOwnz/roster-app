@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Input, Typography, Button, message } from 'antd';
+import { Table, Input, Typography, Button, message, Tag } from 'antd';
 import axios from 'axios';
 import fetchEmployees from "../api/employees";
-
-
-
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const RosterPage = () => {
-  
+  // 📆 Estado para el roster semanal y datos de empleados
   const [data, setData] = useState([]);
-  const [weekStart] = useState('');
+  const [weekStart] = useState(''); // ✉️ Este campo podría expandirse para seleccionar semana
 
-
-  // Obtener los datos del backend al cargar
+  // 📅 Obtener datos iniciales de empleados desde backend
   useEffect(() => {
     fetchEmployees()
       .then(employees => {
@@ -32,23 +28,31 @@ const RosterPage = () => {
       })
       .catch(err => console.error("Error loading employees:", err));
   }, []);
-  
 
-
-  // Guardar al backend
+  // 🖫 Enviar datos al backend para guardarlos
   const handleSave = () => {
     axios.post('/api/rosters', { weekStart, data })
       .then(() => message.success('Roster saved!'))
       .catch(() => message.error('Error saving roster'));
   };
 
-  // Actualizar valores cuando se editan
+  // 📂 Actualizar valores del roster al editar celdas
   const handleInputChange = (value, rowIndex, day) => {
     const updated = [...data];
-    updated[rowIndex][day] = value;
+    updated[rowIndex][day] = value.toUpperCase();
     setData(updated);
   };
 
+  // 🎨 Asignar color según tipo de turno
+  const getShiftColor = (text) => {
+    if (!text) return undefined;
+    if (text === 'OFF' || text === 'ACC') return '#595959';
+    if (text === 'ANNUAL L.') return '#faad14';
+    if (/^\d{2}:\d{2}-\d{2}:\d{2}$/.test(text)) return '#1890ff';
+    return '#d4380d'; // Turno inválido o desconocido
+  };
+
+  // 🔢 Definir columnas para cada día + nombre
   const columns = [
     {
       title: 'Name',
@@ -64,11 +68,8 @@ const RosterPage = () => {
           value={text}
           onChange={e => handleInputChange(e.target.value, index, day)}
           style={{
-            backgroundColor:
-              text === 'OFF' ? '#595959' :
-              text === 'Annual L.' ? '#faad14' :
-              '#1890ff',
-            color: 'white',
+            backgroundColor: getShiftColor(text),
+            color: text ? 'white' : undefined,
             textAlign: 'center',
             border: 'none',
             borderRadius: 4
@@ -78,6 +79,7 @@ const RosterPage = () => {
     })),
   ];
 
+  // 🖼 Render principal
   return (
     <>
       <Typography.Paragraph><strong>Week Starting:</strong> {weekStart}</Typography.Paragraph>
