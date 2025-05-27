@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, List, Button, Modal, TimePicker, message, Spin } from 'antd';
+import { Tooltip } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
@@ -124,13 +126,15 @@ const ShiftConfigPage = () => {
                 renderItem={(time, index) => (
                   <List.Item
                     actions={[
+                    <Tooltip title="Delete time">
                       <Button
-                        type="link"
+                        type="text"
+                        icon={<DeleteOutlined />}
                         danger
                         onClick={() => handleDeleteTime(shiftName, index)}
-                      >
-                        Delete
-                      </Button>
+                        aria-label="Delete shift time"
+                      />
+                    </Tooltip>
                     ]}
                   >
                     {time}
