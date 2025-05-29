@@ -1,15 +1,22 @@
-# Node dependencies
-node_modules/
-npm-debug.log*
-
 # Logs
 logs/
 *.log
 
-# Environment variables
-.env
+# Dependency directories
+client/node_modules/
+server/node_modules/
 
-# OS/Editor junk
+# Build output
+client/build/
+client/dist/
+
+# Env files
+*.env
+
+# OS/editor garbage
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Runtime
+npm-debug.log*
