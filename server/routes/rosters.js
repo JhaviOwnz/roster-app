@@ -5,7 +5,7 @@ const path = require('path');
 
 const rosterFile = path.join(__dirname, '../db/rosters.json');
 const validDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
+const defaultRosterPath = path.join(__dirname, '../db/defaultRoster.json');
 /**
  * ✅ GET /api/rosters
  * Retorna el roster completo almacenado
@@ -13,6 +13,17 @@ const validDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 router.get('/', (req, res) => {
   fs.readFile(rosterFile, 'utf-8', (err, data) => {
     if (err) return res.status(500).json({ error: 'Error reading file' });
+    res.json(JSON.parse(data));
+  });
+});
+
+/* GET /api/rosters/default  –  Devuelve la plantilla */
+router.get('/default', (req, res) => {
+  fs.readFile(defaultRosterPath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading default roster:', err);
+      return res.status(500).json({ error: 'Cannot read default roster' });
+    }
     res.json(JSON.parse(data));
   });
 });

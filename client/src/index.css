@@ -11,3 +11,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* Compactar todas las celdas del roster */
+.compact-table .ant-table-cell {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+/* Tabla compacta */
+.compact-rows .ant-table-tbody > tr > td {
+  padding-top: 0;
+  padding-bottom: 0;
+  height: 32px;               /* fuerza la altura mínimo */
+}
+
+/* Opcional: también cabecera */
+.compact-rows .ant-table-thead > tr > th {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}

@@ -45,4 +45,17 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 - `rosters.js` en backend ahora valida y guarda correctamente el roster semanal completo.
 
 ---
+## [v1.2.0-beta] - 2025-06-30
+### Added
+- **defaultRoster.json** con plantilla semanal cargada al iniciar.
+- Endpoint **GET /api/rosters/default** para servir la plantilla.
+- Carga y normalización automática del roster por defecto en `RosterPage`.
+- Sistema de celdas compactas con `Tag` a ancho completo y colores persistentes.
+- Primer layout responsive (sidebar como Drawer en < 768 px).
 
+### Changed
+- Centralización de colores de turnos (`client/src/constants/colors.js`).
+- Fila & padding más finos (`.compact-rows`).
+
+### Fixed
+- Pérdida de datos al refrescar: ahora se precarga la plantilla por defecto.
