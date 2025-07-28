@@ -5,8 +5,10 @@
 import React, { useEffect, useState } from 'react';
 import {
   Table, Select, Typography, Button,
-  message, Tag, Tooltip, Spin
+  message, Tag, Tooltip, Spin, Popconfirm
 } from 'antd';
+import { PlusOutlined, CloseOutlined } from '@ant-design/icons'; // ⬅️ NUEVO
+
 import axios from 'axios';
 import fetchEmployees from '../api/employees';
 import { PlusOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons';
@@ -27,6 +29,7 @@ const RosterPage = () => {
   const [shifts, setShifts] = useState([]);     // 📂 Config de shifts
   const [loading, setLoading] = useState(true); // ⏳ Spinner inicial
   const [editingCell, setEditingCell] = useState(null); // { row, day } | null
+  const [hoveredCell, setHoveredCell] = useState(null); // 🧠 NUEVO
 
   /* ──────────────── 🔄 CARGA INICIAL 🔄 ──────────────── */
   // Convierte una fila del default JSON a objetos { shift, time }
@@ -100,6 +103,12 @@ const RosterPage = () => {
     updated[rowIndex][day] = { ...updated[rowIndex][day], time: value };
     setData(updated);
     setEditingCell(null); // 🔑 salir de edición al elegir hora
+  };
+
+  const clearShift = (rowIndex, day) => {
+    const updated = [...data];
+    updated[rowIndex][day] = { shift: '', time: '' };
+    setData(updated);
   };
 
   /* ──────────────── 💾 GUARDAR ROSTER ──────────────── */
@@ -190,34 +199,68 @@ const handleSave = () => {
         if (shift) {
           return (
             <Tooltip title={shift}>
-              <Tag
-                color={SHIFT_COLORS[shift] || 'blue'}
-                style={{
-                  cursor: 'pointer',
-                  display: 'block',
-                  width: '100%',
-                  height: '100%',
-                  lineHeight: '32px',
-                  fontSize: 12,
-                  textAlign: 'center',
-                  paddingInline: 0,
-                  borderRadius: 4 // 🎨 Nuevo: bordes suavizados
-                }}
-                onClick={() => setEditingCell({ row: rowIndex, day })}
-              >
-                {time || shift}
-              </Tag>
-            </Tooltip>
+  <Tag
+    color={SHIFT_COLORS[shift] || 'blue'}
+    style={{
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      height: '100%',
+      lineHeight: '32px',
+      fontSize: 12,
+      borderRadius: 0,
+      position: 'relative' // 🆕 para posicionar el ícono fijo
+    }}
+    onClick={() => setEditingCell({ row: rowIndex, day })}
+    onMouseEnter={() => setHoveredCell({ row: rowIndex, day })}
+    onMouseLeave={() => setHoveredCell(null)}
+  >
+    <span>{time || shift}</span>
+<Popconfirm
+  title="Remove shift?"
+  okText="Yes"
+  cancelText="No"
+  onConfirm={(e) => {
+    e.stopPropagation();
+    clearShift(rowIndex, day);
+  }}
+  onCancel={(e) => e.stopPropagation()}
+>
+  <CloseOutlined
+    style={{
+      position: 'absolute',
+      top: '50%',
+      right: 6,
+      transform: 'translateY(-50%)',
+      fontSize: 12,
+      color: '#444',
+      background: 'rgba(255,255,255,0.8)',
+      borderRadius: '50%',
+      padding: 2,
+      opacity: hoveredCell?.row === rowIndex && hoveredCell?.day === day ? 1 : 0,
+      pointerEvents: hoveredCell?.row === rowIndex && hoveredCell?.day === day ? 'auto' : 'none',
+      transition: 'opacity 0.2s ease'
+    }}
+    onClick={(e) => e.stopPropagation()}
+  />
+</Popconfirm>
+
+  </Tag>
+</Tooltip>
+
           );
         }
 
         return (
-          <div
-            style={{ cursor: 'pointer', color: '#bfbfbf' }}
+          <Button
+            type="dashed"
+            icon={<PlusOutlined />}
+            size="small"
+            style={{ width: '100%' }}
             onClick={() => setEditingCell({ row: rowIndex, day })}
-          >
-            +
-          </div>
+          />
         );
       }
     }))

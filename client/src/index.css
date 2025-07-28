@@ -28,3 +28,20 @@ code {
   padding-top: 4px;
   padding-bottom: 4px;
 }
+
+/* Reduce altura y padding entre filas */
+.compact-rows .ant-table-tbody > tr > td {
+  padding: 0 !important;
+  height: 32px;
+}
+
+/* Elimina espacio vertical causado por colapsado de Tag */
+.compact-rows .ant-tag {
+  line-height: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

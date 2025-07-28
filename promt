@@ -1,0 +1,113 @@
+████████████████████████████████████████████████████████████████████████
+█  KAMANA ROSTER APP · CONTINUATION PROMPT  (ULTRA-ROBUST, SELF-LOADING) █
+████████████████████████████████████████████████████████████████████████
+↳  Copy-paste THIS ENTIRE BLOCK into a fresh ChatGPT window.  
+↳  It is formatted for *maximum recall*, includes every file path, current state,
+   architectural decisions, open TODOs, coding conventions, git workflow,
+   future milestones, and meta-instructions for the assistant itself.
+────────────────────────────────────────────────────────────────────────
+╭─ META-INSTRUCTIONS ──────────────────────────────────────────────────╮
+│ • You (ChatGPT) are resuming **one-on-one solo-dev mode**.           │
+│ • Default branch is **main** (no feature branches unless explicitly  │
+│   requested).                                                        │
+│ • Use concise commit messages; update CHANGELOG.md per SemVer.       │
+│ • When adding code, provide only the diff-ready snippets (no extra   │
+│   prose inside code blocks).                                         │
+│ • Language: mix of 🇪🇸 + 🇬🇧 tech jargon is acceptable. Feel free to   │
+│   insert shell commands, JSON, JSX, Bash, PowerShell, pseudo-code,   │
+│   ASCII diagrams, Mermaid, or SQL if it clarifies the task.          │
+│ • Rely on **flat-file JSON** backend (no DB) unless migration        │
+│   explicitly planned.                                                │
+╰──────────────────────────────────────────────────────────────────────╯
+
+╭─ REPOSITORY ─────────────────────────────────────────────────────────╮
+│ GitHub : https://github.com/JhaviOwnz/roster-app                     │
+│ Branch : main                                                        │
+│ Node   : 18.15.0  ·  npm: 9.6.4  ·  React: 19.x (CRA)                │
+│ Script : `npm run dev` → concurrently client & server                │
+╰──────────────────────────────────────────────────────────────────────╯
+
+╭─ FILE TREE SNAPSHOT (2025-06-30) ────────────────────────────────────╮
+│ server/                                                              │
+│ ├─ db/                                                               │
+│ │   ├─ employees.json            ← 13 empleados sample               │
+│ │   ├─ shiftConfig.json          ← AM/PM + OFF/ACC/SICK…             │
+│ │   └─ defaultRoster.json        ← plantilla precargada (weekStart)  │
+│ ├─ routes/                                                           │
+│ │   └─ rosters.js                ← GET /, POST /, GET /default       │
+│ └─ index.js                      ← mounts /api/rosters & /api/shifts │
+│ client/                                                              │
+│ └─ src/                                                              │
+│     ├─ components/                                                   │
+│     │   ├─ RosterPage.js         ← Tag-grid con edición click-to-edit│
+│     │   └─ SidebarLayout.js?     ← responsive WIP (Drawer mobile)    │
+│     ├─ constants/                                                   │
+│     │   └─ colors.js             ← SHIFT_COLORS map                  │
+│     ├─ api/                                                          │
+│     │   └─ employees.js          ← fetch helper                      │
+│     └─ index.css                 ← .compact-rows (row height 32px)   │
+╰──────────────────────────────────────────────────────────────────────╯
+
+╭─ DATA CONTRACTS ─────────────────────────────────────────────────────╮
+│ shiftConfig.json  : [{id,name,times:[hh:mm-hh:mm]}]                  │
+│ employees.json     : [{id,name}]                                     │
+│ defaultRoster.json :                                                │
+│   { weekStart: ISO-date, data:[                                      │
+│       { name, Mon:"09:00-16:30"|“OFF”|"" , …Sun }                    │
+│     ] }                                                              │
+│ RosterPage internal cell model : { shift:"AM"|“OFF”|"", time:"" }    │
+╰──────────────────────────────────────────────────────────────────────╯
+
+╭─ COMPLETED FEATURES (v1.2.0-dev) ───────────────────────────────────╮
+│ ✓ Normaliza roster por defecto a objetos {shift,time}.               │
+│ ✓ Tag ocupa 100 % de celda, colores persistentes (AM/PM/OFF…).       │
+│ ✓ `.compact-rows` => filas 32 px, padding 0.                          │
+│ ✓ Responsive base: sidebar oculta <768 px (Drawer TODO).             │
+│ ✓ Save Roster → POST /api/rosters (flat-file).                       │
+╰──────────────────────────────────────────────────────────────────────╯
+
+╭─ OPEN ROADMAP (pick & queue) ───────────────────────────────────────╮
+│ [A] 🔖 **Save as Default**                                           │
+│     · PUT /api/rosters/default (overwrite JSON).                     │
+│     · Frontend Modal confirm.                                        │
+│ [B] 🔍 **Filters**                                                   │
+│     · Search by employee name (debounced).                           │
+│     · Toggle day columns (Mon-Sun).                                  │
+│     · Multi-select shift type (AM/PM/OFF/ACC…).                      │
+│ [C] 💾 **Autosave**                                                  │
+│     · localStorage draft OR debounce POST to /api/rosters.           │
+│ [D] 📱 **Responsive++**                                              │
+│     · Drawer w/ AntD <Grid.useBreakpoint>.                           │
+│     · Sticky header, horizontal scroll hint.                         │
+│ [E] 🗂 **State Management**                                          │
+│     · Lift to React Context or Zustand once filters land.            │
+│ [F] 📈 **Analytics Export**                                          │
+│     · CSV export of roster (for payroll).                            │
+╰──────────────────────────────────────────────────────────────────────╯
+
+╭─ CODING CONVENTIONS ────────────────────────────────────────────────╮
+│ • Commit prefix: feat / fix / chore / refactor / docs.               │
+│ • CHANGELOG sections: Added / Changed / Fixed / Removed.             │
+│ • Use ES2024 features OK (optional chaining, nullish coalescing).    │
+│ • Keep backend callbacks (fs.readFile) for now; no DB.               │
+│ • Frontend uses Ant Design 5.25: Tag, Select, Table, Drawer, Modal.  │
+╰──────────────────────────────────────────────────────────────────────╯
+
+╭─ NEXT-STEP TEMPLATE (sample) ───────────────────────────────────────╮
+│ **User**: “Implement Save as Default.”                               │
+│ **Assistant**:                                                       │
+│ 1. backend diff (rosters.js PUT route).                              │
+│ 2. frontend diff (Button + Modal).                                   │
+│ 3. update CHANGELOG snippet.                                         │
+│ 4. git commands (add/commit/push).                                   │
+╰──────────────────────────────────────────────────────────────────────╯
+
+╭─ MACHINE-READABLE SUMMARY (for embeddings) ─────────────────────────╮
+│ JSON:                                                                │
+│ { "repo":"roster-app","branch":"main","stack":                      │
+│   {"frontend":"React19+AntD","backend":"Express4","storage":"JSON"}, │
+│   "defaultRoster":"server/db/defaultRoster.json",                    │
+│   "completed":["normalize roster","compact tags","responsive base"], │
+│   "roadmap":["PUT default","filters","autosave","responsive++"] }    │
+╰──────────────────────────────────────────────────────────────────────╯
+████████████████████████████████████████████████████████████████████████
