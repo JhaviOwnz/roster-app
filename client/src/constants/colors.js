@@ -1,9 +1,12 @@
-// client/src/constants/colors.js
+// ─────────────────────────────
+// 🎨 SHIFT_COLORS – PDF friendly
+// ─────────────────────────────
 export const SHIFT_COLORS = {
-  AM:   '#1890ff',  // Celeste
-  PM:   '#ff4d4f',  // Rojo
-  OFF:  '#595959',  // Gris
-  ACC:  '#722ed1',  // Morado
-  SICK: '#faad14',  // Amarillo
-  'Annual L.': '#faad14'
+  'AM': '#007BFF', // azul brillante y sólido (estilo Bootstrap primary)
+
+  'PM': '#e57373',        // coral más definido
+  'ACC': '#b39ddb',       // lavanda pastel con presencia
+  'OFF': '#7f8c8d',       // gris medio sólido
+  'SICK': '#f4b183',      // durazno con cuerpo
+  'Annual L.': '#f7dc6f'  // amarillo pastel más saturado
 };
