@@ -16,22 +16,23 @@
 │ • Language: mix of 🇪🇸 + 🇬🇧 tech jargon is acceptable. Feel free to   │
 │   insert shell commands, JSON, JSX, Bash, PowerShell, pseudo-code,   │
 │   ASCII diagrams, Mermaid, or SQL if it clarifies the task.          │
-│ • Rely on **flat-file JSON** backend (no DB) unless migration        │
-│   explicitly planned.                                                │
+│ • Frontend is in React 19 (CRA) + Ant Design 5.25 + Framer Motion.   │
+│ • Backend uses flat-file JSON. No DB unless migration is explicit.   │
 ╰──────────────────────────────────────────────────────────────────────╯
 
 ╭─ REPOSITORY ─────────────────────────────────────────────────────────╮
 │ GitHub : https://github.com/JhaviOwnz/roster-app                     │
 │ Branch : main                                                        │
-│ Node   : 18.15.0  ·  npm: 9.6.4  ·  React: 19.x (CRA)                │
+│ Node   : 18.15.0  ·  npm: 9.6.4  ·  React: 19.x                      │
 │ Script : `npm run dev` → concurrently client & server                │
 ╰──────────────────────────────────────────────────────────────────────╯
 
-╭─ FILE TREE SNAPSHOT (2025-06-30) ────────────────────────────────────╮
+╭─ FILE TREE SNAPSHOT (2025-07-29) ────────────────────────────────────╮
 │ server/                                                              │
 │ ├─ db/                                                               │
 │ │   ├─ employees.json            ← 13 empleados sample               │
 │ │   ├─ shiftConfig.json          ← AM/PM + OFF/ACC/SICK…             │
+│ │   ├─ rosters.json              ← roster actual (se guarda aquí)   │
 │ │   └─ defaultRoster.json        ← plantilla precargada (weekStart)  │
 │ ├─ routes/                                                           │
 │ │   └─ rosters.js                ← GET /, POST /, GET /default       │
@@ -39,75 +40,68 @@
 │ client/                                                              │
 │ └─ src/                                                              │
 │     ├─ components/                                                   │
-│     │   ├─ RosterPage.js         ← Tag-grid con edición click-to-edit│
-│     │   └─ SidebarLayout.js?     ← responsive WIP (Drawer mobile)    │
+│     │   └─ RosterPage.js         ← tag-grid con edición y export     │
 │     ├─ constants/                                                   │
-│     │   └─ colors.js             ← SHIFT_COLORS map                  │
+│     │   └─ colors.js             ← SHIFT_COLORS (pastel mejorado)   │
 │     ├─ api/                                                          │
-│     │   └─ employees.js          ← fetch helper                      │
-│     └─ index.css                 ← .compact-rows (row height 32px)   │
+│     │   └─ employees.js          ← helper fetch empleados            │
+│     └─ index.css                 ← .compact-rows (height 32px)       │
 ╰──────────────────────────────────────────────────────────────────────╯
 
 ╭─ DATA CONTRACTS ─────────────────────────────────────────────────────╮
 │ shiftConfig.json  : [{id,name,times:[hh:mm-hh:mm]}]                  │
 │ employees.json     : [{id,name}]                                     │
-│ defaultRoster.json :                                                │
-│   { weekStart: ISO-date, data:[                                      │
-│       { name, Mon:"09:00-16:30"|“OFF”|"" , …Sun }                    │
-│     ] }                                                              │
-│ RosterPage internal cell model : { shift:"AM"|“OFF”|"", time:"" }    │
+│ rosters.json       : { weekStart, data: [ { name, Mon..Sun } ] }     │
+│ cell model (FE)    : { shift: string, time: string }                 │
 ╰──────────────────────────────────────────────────────────────────────╯
 
-╭─ COMPLETED FEATURES (v1.2.0-dev) ───────────────────────────────────╮
-│ ✓ Normaliza roster por defecto a objetos {shift,time}.               │
-│ ✓ Tag ocupa 100 % de celda, colores persistentes (AM/PM/OFF…).       │
-│ ✓ `.compact-rows` => filas 32 px, padding 0.                          │
-│ ✓ Responsive base: sidebar oculta <768 px (Drawer TODO).             │
-│ ✓ Save Roster → POST /api/rosters (flat-file).                       │
+╭─ COMPLETED FEATURES (v1.4.0-dev) ───────────────────────────────────╮
+│ ✓ Save Roster → guarda en rosters.json                              │
+│ ✓ Export to PDF (html2canvas + jsPDF) con título y sin "+"          │
+│ ✓ Animación botón Save (Framer Motion)                              │
+│ ✓ SHIFT_COLORS pastel balanceados (presencia + impresión)           │
+│ ✓ Tag ocupa 100 % celda + `borderRadius: 6`, `fontWeight: 500`      │
+│ ✓ Responsive base lista, pendiente Sidebar                          │
 ╰──────────────────────────────────────────────────────────────────────╯
 
-╭─ OPEN ROADMAP (pick & queue) ───────────────────────────────────────╮
-│ [A] 🔖 **Save as Default**                                           │
-│     · PUT /api/rosters/default (overwrite JSON).                     │
-│     · Frontend Modal confirm.                                        │
-│ [B] 🔍 **Filters**                                                   │
-│     · Search by employee name (debounced).                           │
-│     · Toggle day columns (Mon-Sun).                                  │
-│     · Multi-select shift type (AM/PM/OFF/ACC…).                      │
-│ [C] 💾 **Autosave**                                                  │
-│     · localStorage draft OR debounce POST to /api/rosters.           │
-│ [D] 📱 **Responsive++**                                              │
-│     · Drawer w/ AntD <Grid.useBreakpoint>.                           │
-│     · Sticky header, horizontal scroll hint.                         │
-│ [E] 🗂 **State Management**                                          │
-│     · Lift to React Context or Zustand once filters land.            │
-│ [F] 📈 **Analytics Export**                                          │
-│     · CSV export of roster (for payroll).                            │
+╭─ OPEN ROADMAP (prioridad editable) ─────────────────────────────────╮
+│ [A] 📅 Selector de semana (DatePicker)                              │
+│     · Cambiar visualmente el weekStart                             │
+│ [B] 🔁 Duplicar semana anterior                                     │
+│     · "Copy Previous Week" → clona al weekStart actual             │
+│ [C] 🛠 ShiftConfigPage                                              │
+│     · Edición de etiquetas + colores desde UI                      │
+│ [D] 🔐 Soporte para roles/usuarios                                  │
+│     · viewer vs admin                                               │
+│ [E] 📤 Export CSV mensual                                           │
+│     · Exportador para payroll u horas                              │
+│ [F] 🧠 State refactor → Context o Zustand (si filtros llegan)       │
 ╰──────────────────────────────────────────────────────────────────────╯
 
 ╭─ CODING CONVENTIONS ────────────────────────────────────────────────╮
 │ • Commit prefix: feat / fix / chore / refactor / docs.               │
-│ • CHANGELOG sections: Added / Changed / Fixed / Removed.             │
-│ • Use ES2024 features OK (optional chaining, nullish coalescing).    │
-│ • Keep backend callbacks (fs.readFile) for now; no DB.               │
-│ • Frontend uses Ant Design 5.25: Tag, Select, Table, Drawer, Modal.  │
+│ • CHANGELOG: Added / Changed / Fixed / Removed.                      │
+│ • Git: `main` única, sin ramas feature por defecto.                  │
+│ • Prefer ES2024+, Ant Design v5.25+, React 19, json backend.         │
+│ • Estilo visual: bordes redondeados, sombras suaves, color pastel   │
+│ • Animaciones: Framer Motion con `whileTap` / `animate`             │
 ╰──────────────────────────────────────────────────────────────────────╯
 
 ╭─ NEXT-STEP TEMPLATE (sample) ───────────────────────────────────────╮
-│ **User**: “Implement Save as Default.”                               │
-│ **Assistant**:                                                       │
-│ 1. backend diff (rosters.js PUT route).                              │
-│ 2. frontend diff (Button + Modal).                                   │
-│ 3. update CHANGELOG snippet.                                         │
-│ 4. git commands (add/commit/push).                                   │
+│ **User**: “Agreguemos el selector visual de semana.”                │
+│ **Assistant**:                                                      │
+│ 1. `DatePicker` con `onChange → setWeekStart()`                     │
+│ 2. Actualizar weekStart en save/export                              │
+│ 3. Estilo consistente con botones                                   │
+│ 4. Commit + push                                                    │
 ╰──────────────────────────────────────────────────────────────────────╯
 
-╭─ MACHINE-READABLE SUMMARY (for embeddings) ─────────────────────────╮
-│ JSON:                                                                │
-│ { "repo":"roster-app","branch":"main","stack":                      │
-│   {"frontend":"React19+AntD","backend":"Express4","storage":"JSON"}, │
-│   "defaultRoster":"server/db/defaultRoster.json",                    │
-│   "completed":["normalize roster","compact tags","responsive base"], │
-│   "roadmap":["PUT default","filters","autosave","responsive++"] }    │
+╭─ MACHINE-READABLE SUMMARY ─────────────────────────────────────────╮
+│ JSON:                                                               │
+│ { "repo":"roster-app", "branch":"main",                            │
+│   "stack":{"frontend":"React+AntD+Framer","backend":"Express"},    │
+│   "storage":"JSON flat-file",                                      │
+│   "features":["save","pdf export","color","motion","grid-edit"],   │
+│   "next":["date selector","copy week","auth"] }                    │
 ╰──────────────────────────────────────────────────────────────────────╯
 ████████████████████████████████████████████████████████████████████████
