@@ -17,7 +17,7 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const RosterPage = () => {
   /* ──────────────── 🗄️  ESTADOS PRINCIPALES ──────────────── */
   const [data, setData] = useState([]);         // 🧍‍♂️ Empleados + turnos
-  const [weekStart] = useState('');             // 📆 (placeholder)
+  const [weekStart, setWeekStart] = useState('2025-07-29');             // 📆 (placeholder)
   const [shifts, setShifts] = useState([]);     // 📂 Config de shifts
   const [loading, setLoading] = useState(true); // ⏳ Spinner inicial
   const [editingCell, setEditingCell] = useState(null); // { row, day } | null
@@ -105,7 +105,13 @@ useEffect(() => {
       const entry = { name: row.name };
       days.forEach(d => {
         const cell = row[d] || {};
-        entry[d] = cell.time || cell.shift || '';
+        if (cell.shift === 'OFF' || cell.shift === 'ACC' || cell.shift === 'ANNUAL L.') {
+  entry[d] = cell.shift;
+} else if (cell.time) {
+  entry[d] = cell.time; // ej: "09:00-17:00"
+} else {
+  entry[d] = ''; // vacío si no hay nada válido
+}
       });
       return entry;
     });
