@@ -7,8 +7,6 @@ import {
   Table, Select, Typography, Button,
   message, Tag, Tooltip, Spin, Popconfirm
 } from 'antd';
-import { PlusOutlined, CloseOutlined } from '@ant-design/icons'; // ⬅️ NUEVO
-
 import axios from 'axios';
 import fetchEmployees from '../api/employees';
 import { PlusOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons';
