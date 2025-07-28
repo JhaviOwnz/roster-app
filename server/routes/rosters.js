@@ -6,6 +6,7 @@ const path = require('path');
 const rosterFile = path.join(__dirname, '../db/rosters.json');
 const validDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const defaultRosterPath = path.join(__dirname, '../db/defaultRoster.json');
+
 /**
  * ✅ GET /api/rosters
  * Retorna el roster completo almacenado
@@ -16,7 +17,13 @@ router.get('/', (req, res) => {
     res.json(JSON.parse(data));
   });
 });
-
+/* 🧪 GET /api/rosters/raw  –  Verifica el contenido plano del archivo */
+router.get('/raw', (req, res) => {
+  fs.readFile(rosterFile, 'utf-8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'Error reading file' });
+    res.type('text/plain').send(data);  // 👈 sin parsear
+  });
+});
 /* GET /api/rosters/default  –  Devuelve la plantilla */
 router.get('/default', (req, res) => {
   fs.readFile(defaultRosterPath, 'utf8', (err, data) => {
@@ -29,11 +36,9 @@ router.get('/default', (req, res) => {
 });
 
 /**
- * ✅ POST /api/rosters
- * Guarda el roster semanal enviado por el frontend
- * Espera formato: { weekStart: String, data: Array<{ name: String, Mon..Sun: String }> }
+ * 🔁 Función compartida de validación y guardado
  */
-router.post('/', (req, res) => {
+function validateAndSaveRoster(req, res) {
   const newRoster = req.body;
 
   // 🔎 Validación básica de estructura
@@ -66,11 +71,23 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'Invalid shift values', details: errors });
   }
 
-  // ✅ Guardar el archivo
-  fs.writeFile(rosterFile, JSON.stringify(newRoster, null, 2), (err) => {
+  // 💾 Guardar el archivo
+  fs.writeFile(rosterFile, JSON.stringify(newRoster, null, 2), 'utf-8', (err) => {
     if (err) return res.status(500).json({ error: 'Error saving roster' });
     res.json({ status: 'Saved' });
   });
-});
+}
+
+/**
+ * ✅ POST /api/rosters
+ * Guarda el roster semanal enviado por el frontend
+ */
+router.post('/', validateAndSaveRoster);
+
+/**
+ * ✅ PUT /api/rosters
+ * Alternativa equivalente a POST – usado por algunos clientes
+ */
+router.put('/', validateAndSaveRoster);
 
 module.exports = router;
