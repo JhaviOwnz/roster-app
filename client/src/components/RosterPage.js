@@ -1,7 +1,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 //  RosterPage.js  –  Página principal para editar los rosters semanales
 // ────────────────────────────────────────────────────────────────────────────
-
+import '../App.css'; //
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import React, { useEffect, useState } from 'react';
@@ -150,10 +150,11 @@ const RosterPage = () => {
   };
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', fixed: 'left', width: 120 },
+    { title: 'Name', dataIndex: 'name', align: 'center', width: 120, className: 'roster-name-cell' },
     ...days.map(day => ({
       title: day,
       dataIndex: day,
+      className: 'roster-day-column', 
       render: (_, __, rowIndex) => {
         const cell = data[rowIndex][day] || {};
         const { shift = '', time = '' } = cell;

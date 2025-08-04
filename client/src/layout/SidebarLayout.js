@@ -4,12 +4,13 @@ import {
   CalendarOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const { Sider, Content } = Layout;
 
 const SidebarLayout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -22,10 +23,12 @@ const SidebarLayout = ({ children }) => {
             fontWeight: 'bold',
             padding: '16px',
             textAlign: 'center',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.2)'
+            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+            cursor: 'pointer'
           }}
+          onClick={() => navigate('/')}
         >
-          Kamana Roster
+          Kamana App
         </div>
 
         {/* Menú de navegación */}

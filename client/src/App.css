@@ -53,3 +53,21 @@ body {
 .shake {
   animation: shake 0.4s ease-in-out;
 }
+
+
+/* Centrar los títulos (encabezados) de la tabla */
+.compact-rows th {
+  text-align: center !important;
+}
+
+/* (opcional) Centrar contenido de la columna 'Name' si aún no lo hace */
+.roster-name-cell {
+  text-align: center;
+  font-weight: 500;
+}
+.compact-rows thead tr th {
+  background-color: #fafafa;
+  font-weight: 600;
+  font-size: 13px;
+  border-bottom: 2px solid #d9d9d9;
+}
